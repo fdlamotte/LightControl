@@ -1,0 +1,8 @@
+{
+	"host_name":"localhost",
+	"host_port":"7117",
+	"redirect_uri":"http://localhost:7117",
+	"client_id":"",
+	"client_secret":"",
+	"subscription_key":""
+}
