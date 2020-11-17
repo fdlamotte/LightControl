@@ -29,6 +29,27 @@ response = requests.get(url, headers=headers)
 
 plant=json.loads(response.text)
 
-print(json.dumps(plant['modules']['lights'], indent = 4))
+lights = {}
+for light in plant['modules']['lights']:
+    id = light['sender']['plant']['module']['id']
+    lights[id] = {}
+    lights[id]["status"] = light['status']
+    if "level" in light:
+        lights[id]["level"] = light["level"]
 
-
+for ambient in topology["plant"]["ambients"]:
+    if len(ambient["modules"]) > 0:
+        print (ambient["name"])
+        for module in ambient["modules"]:
+            if module["device"] == "light":
+                l = lights[module["id"]]
+                dispstr = "  " 
+                if l["status"] == "on":
+                    dispstr += "# "
+                else:
+                    dispstr += "- "
+                dispstr += module["name"]
+                if "level" in l:
+                    dispstr += " (" + str(l["level"]) + ")"
+                print (dispstr)
+                
