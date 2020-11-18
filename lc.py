@@ -1,7 +1,10 @@
 #!/bin/python
 
 import requests
-import simplejson as json
+try:
+    import simplejson as json
+except ImportError:
+    import json
 import sys
 
 lightstat = None
