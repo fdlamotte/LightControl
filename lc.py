@@ -4,18 +4,6 @@ import requests
 import json
 import sys
 
-f=open('app_params.json', "r")
-app_params = json.loads(f.read())
-f.close()
-
-f=open('token.json', "r")
-token = json.loads(f.read())
-f.close()
-
-f=open('topology.json', "r")
-topology = json.loads(f.read())
-f.close()
-
 lightstat = None
 
 def get_plant():
@@ -137,12 +125,22 @@ def rewind(steps):
         dispstr+="\033[F"
     print (dispstr)
 
-# building lists of lights and ambients for the execution of commands
-lights=build_lightlist()
-ambients=build_ambientlist()
+# First print topology to user
+f=open('topology.json', "r")
+topology = json.loads(f.read())
+f.close()
 
 print_status()
-sys.stdout.write("cmd> ");
+
+
+# opening app parameters
+f=open('app_params.json', "r")
+app_params = json.loads(f.read())
+f.close()
+
+f=open('token.json', "r")
+token = json.loads(f.read())
+f.close()
 
 plant = get_plant()
 if plant is None:
@@ -152,6 +150,10 @@ if plant is None:
         sys.exit(-1) 
 
 lightstat = build_lightstat()
+
+# building lists of lights and ambients for the execution of commands
+lights=build_lightlist()
+ambients=build_ambientlist()
 
 rewind(len(lights) + len(ambients))
 print_status()
