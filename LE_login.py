@@ -44,7 +44,7 @@ authorize_url="https://partners-login.eliotbylegrand.com/authorize"
 authorize_url+="?client_id="+app_params['client_id']
 authorize_url+="&response_type=code"
 authorize_url+="&redirect_uri="+app_params['redirect_uri']
-webbrowser.open(authorize_url, new="2")
+webbrowser.open(authorize_url, new=2)
 print("Browser should open, if not go to " + authorize_url)
 
 try:
