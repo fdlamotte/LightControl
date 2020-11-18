@@ -51,7 +51,15 @@ def renew_token():
     f.close() 
 
 
-def set_light_status(light_id, new_status):
+def set_light(light_id, new_status):
+    authorization="Bearer " + token['access_token']
+
+    headers = {
+        'Content-Type': 'application/json',
+        'Ocp-Apim-Subscription-Key': app_params['subscription_key'],
+        'Authorization': authorization,
+    }
+
     url="https://api.developer.legrand.com/hc/api/v1.0/"
     url+="light/lighting/addressLocation/plants/"
     url+=topology['plant']['id']
@@ -169,7 +177,7 @@ for c in cmd:
     if lightstat[light_id]["status"] == "on":
         set_light(light_id, "off")
     else:
-        set_light(light_id, "off")
+        set_light(light_id, "on")
     
 
 sys.exit(len(cmd)==0)
