@@ -136,13 +136,25 @@ def rewind(steps):
         dispstr+="\033[F"
     print (dispstr)
 
+def process_cmd(cmd):
+    for c in cmd:
+        i = ord(c) - ord('a')
+        if i > 0 and i < len(lights):
+            light_id = lights[i]
+            if lightstat[light_id]["status"] == "on":
+                set_light(light_id, "off")
+                lightstat[light_id]["status"] = "off"
+            else:
+                set_light(light_id, "on")
+                lightstat[light_id]["status"] = "on"
+
 # First print topology to user
 f=open('topology.json', "r")
 topology = json.loads(f.read())
 f.close()
 
 print_status()
-
+print("waiting ... ");
 
 # opening app parameters
 f=open('app_params.json', "r")
@@ -166,19 +178,12 @@ lightstat = build_lightstat()
 lights=build_lightlist()
 ambients=build_ambientlist()
 
-rewind(len(lights) + len(ambients))
-print_status()
+while True:
+    rewind(len(lights) + len(ambients) + 1)
+    print_status()
+    sys.stdout.write(u"\u001b[0K")
+    cmd = input("cmd> ");
+    process_cmd(cmd)
+    if len(sys.argv) > 1 and sys.argv[1] != 'l' or len(cmd) == 0:
+        break
 
-cmd = input("cmd> ");
-for c in cmd:
-    i = ord(c) - ord('a')
-    if i > 0 and i < len(lights):
-        light_id = lights[i]
-        if lightstat[light_id]["status"] == "on":
-            set_light(light_id, "off")
-            lightstat[light_id]["status"] = "off"
-        else:
-            set_light(light_id, "on")
-            lightstat[light_id]["status"] = "on"
-
-sys.exit(len(cmd)==0)
