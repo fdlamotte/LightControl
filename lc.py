@@ -174,10 +174,11 @@ for c in cmd:
     i = ord(c) - ord('a')
     if i > 0 and i < len(lights):
         light_id = lights[i]
-    if lightstat[light_id]["status"] == "on":
-        set_light(light_id, "off")
-    else:
-        set_light(light_id, "on")
-    
+        if lightstat[light_id]["status"] == "on":
+            set_light(light_id, "off")
+            lightstat[light_id]["status"] = "off"
+        else:
+            set_light(light_id, "on")
+            lightstat[light_id]["status"] = "on"
 
 sys.exit(len(cmd)==0)
