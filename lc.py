@@ -117,16 +117,16 @@ def print_status():
                     if not lightstat is None:
                         l = lightstat[module["id"]]
                         if l["status"] == "on":
-                            dispstr += "# "
+                            dispstr += "\033[33m#\033[0m "
                         else:
-                            dispstr += "- "
+                            dispstr += "\033[34m-\033[0m "
                     else:
                         dispstr += "- "
 
                     dispstr += module["name"]
 
                     if (not lightstat is None) and "level" in l:
-                        dispstr += " (" + str(l["level"]) + ")"
+                        dispstr += "\033[36m (" + str(l["level"]) + ")\033[0m"
 
                     print (dispstr)
 
