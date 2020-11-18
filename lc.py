@@ -146,7 +146,6 @@ sys.stdout.write("cmd> ");
 
 plant = get_plant()
 if plant is None:
-    print("Renewing token ...")
     renew_token()
     plant = get_plant()
     if plant is None:
