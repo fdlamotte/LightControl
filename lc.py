@@ -50,7 +50,10 @@ def get_plant():
         print("Getting new token ...")
         renew_token()
 
+        headers['Authorization'] = "Bearer " + token['access_token']
+
         response = requests.get(url, headers=headers)
+
         if not response.ok:
             return None
 
@@ -79,6 +82,7 @@ def set_light(light_id, new_status):
         rewind(1)
         print("Getting new token ...")
         renew_token()
+        headers['Authorization'] = "Bearer " + token['access_token']
         response = requests.post(url, headers=headers, data=data)
 
 def set_light_level(light_id, new_level):
@@ -104,6 +108,7 @@ def set_light_level(light_id, new_level):
         rewind(1)
         print("Getting new token ...")
         renew_token()
+        headers['Authorization'] = "Bearer " + token['access_token']
         response = requests.post(url, headers=headers, data=data)
         
 
