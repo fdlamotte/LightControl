@@ -70,6 +70,25 @@ def set_light(light_id, new_status):
         
     response = requests.post(url, headers=headers, data=data)
 
+def set_light_level(light_id, new_level):
+    authorization="Bearer " + token['access_token']
+
+    headers = {
+        'Content-Type': 'application/json',
+        'Ocp-Apim-Subscription-Key': app_params['subscription_key'],
+        'Authorization': authorization,
+    }
+
+    url="https://api.developer.legrand.com/hc/api/v1.0/"
+    url+="light/lighting/addressLocation/plants/"
+    url+=topology['plant']['id']
+    url+="/modules/parameter/id/value/"
+    url+=light_id
+
+    data = '{"level": ' + new_level + '}'
+        
+    response = requests.post(url, headers=headers, data=data)
+
 def build_lightstat():
     lightstat = {}
 
@@ -138,25 +157,37 @@ def rewind(steps):
         sys.stdout.write(u"\u001b[0K\033[F")
 
 def process_cmd(cmd):
-    for c in cmd:
-        i = ord(c) - ord('a')
-        if i > 0 and i < len(lights):
-            light_id = lights[i]
-            if lightstat[light_id]["status"] == "on":
-                set_light(light_id, "off")
-                lightstat[light_id]["status"] = "off"
-            else:
-                set_light(light_id, "on")
-                lightstat[light_id]["status"] = "on"
+    if cmd[0] >= 'A' and cmd[0] <= 'Z':
+        # set the level of a light
+        c = cmd[0]
+        i = ord(c) - ord('A')
+        set_light_level(lights[i], cmd[1:])
+    else:
+        # toggle each light in the string
+        for c in cmd:
+            if c >= 'a' and c <= 'z':
+                i = ord(c) - ord('a')
+                light_id = lights[i]
+                if lightstat[light_id]["status"] == "on":
+                    set_light(light_id, "off")
+                    lightstat[light_id]["status"] = "off"
+                else:
+                    set_light(light_id, "on")
+                    lightstat[light_id]["status"] = "on"
 
 def cmd_loop():
+    global lightstat
+    global plant
     while True:
         rewind(len(lights) + len(ambients) + 1)
         print_status()
         clear_line()
         cmd = input("cmd> ");
-        process_cmd(cmd)
-        if len(cmd) == 0:
+        if len(cmd) > 0:
+            process_cmd(cmd)
+            plant=get_plant()
+            lightstat=build_lightstat()
+        else:
             break
 
 # First print topology to user
@@ -165,7 +196,7 @@ topology = json.loads(f.read())
 f.close()
 
 print_status()
-print("waiting ... ");
+print("Initializing ... ");
 
 # opening app parameters
 f=open('app_params.json', "r")
@@ -178,6 +209,8 @@ f.close()
 
 plant = get_plant()
 if plant is None:
+    rewind(1)
+    print("Getting new token ...")
     renew_token()
     plant = get_plant()
     if plant is None:
