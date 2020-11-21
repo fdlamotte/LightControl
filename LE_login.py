@@ -1,13 +1,11 @@
+#!/bin/python
+
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from urllib.parse import urlparse, parse_qsl, parse_qs
 import time
 import requests
 import webbrowser
 import json
-
-hostName = "localhost"
-hostPort = 7117
-code = ""
 
 class MyServer(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -34,26 +32,31 @@ class MyServer(BaseHTTPRequestHandler):
         f.write(token_str)
         f.close() 
  
+def log_into_legrand():
+    app_params = json.loads(open('app_params.json').read())
+    
+    hostName=app_params['host_name']
+    hostPort=app_params['host_port']
+    
+    myServer = HTTPServer((hostName, hostPort), MyServer)
+    print(time.asctime(), "Server Starts - %s:%s" % (hostName, hostPort))
+    
+    # Display login page in a browser
+    authorize_url="https://partners-login.eliotbylegrand.com/authorize"
+    authorize_url+="?client_id="+app_params['client_id']
+    authorize_url+="&response_type=code"
+    authorize_url+="&redirect_uri="+app_params['redirect_uri']
+    webbrowser.open(authorize_url, new=2)
+    print("Browser should open, if not go to " + authorize_url)
+    
+    try:
+    	# Handle one request then exit
+    	myServer.handle_request()
+    except KeyboardInterrupt:
+        print("Exit via keyboard interrupt");
+        pass
+    
+    myServer.server_close()
 
-myServer = HTTPServer((hostName, hostPort), MyServer)
-print(time.asctime(), "Server Starts - %s:%s" % (hostName, hostPort))
-
-# Display login page in a browser
-app_params = json.loads(open('app_params.json').read())
-authorize_url="https://partners-login.eliotbylegrand.com/authorize"
-authorize_url+="?client_id="+app_params['client_id']
-authorize_url+="&response_type=code"
-authorize_url+="&redirect_uri="+app_params['redirect_uri']
-webbrowser.open(authorize_url, new=2)
-print("Browser should open, if not go to " + authorize_url)
-
-try:
-	# Handle one request then exit
-	myServer.handle_request()
-except KeyboardInterrupt:
-    print("Exit via keyboard interrupt");
-    pass
-
-myServer.server_close()
-
+log_into_legrand()
 
