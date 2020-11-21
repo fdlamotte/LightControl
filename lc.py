@@ -6,29 +6,9 @@ try:
 except ImportError:
     import json
 import sys
+import time
 
 lightstat = None
-
-def get_plant():
-    authorization="Bearer " + token['access_token']
-    
-    url="https://api.developer.legrand.com/hc/api/v1.0/"
-    url+="plants/"
-    url+=topology['plant']['id']
-    
-    headers = {
-        'Content-Type': 'application/json',
-        'Ocp-Apim-Subscription-Key': app_params['subscription_key'],
-        'Authorization': authorization,
-    }
-
-    response = requests.get(url, headers=headers)
-
-    if not response.ok:
-        return None
-
-    return json.loads(response.text)
-
 
 def renew_token():
     global token
@@ -50,6 +30,31 @@ def renew_token():
     f.write(token_str)
     f.close() 
 
+def get_plant():
+    authorization="Bearer " + token['access_token']
+    
+    url="https://api.developer.legrand.com/hc/api/v1.0/"
+    url+="plants/"
+    url+=topology['plant']['id']
+    
+    headers = {
+        'Content-Type': 'application/json',
+        'Ocp-Apim-Subscription-Key': app_params['subscription_key'],
+        'Authorization': authorization,
+    }
+
+    response = requests.get(url, headers=headers)
+
+    if not response.ok:
+        rewind(1)
+        print("Getting new token ...")
+        renew_token()
+
+        response = requests.get(url, headers=headers)
+        if not response.ok:
+            return None
+
+    return json.loads(response.text)
 
 def set_light(light_id, new_status):
     authorization="Bearer " + token['access_token']
@@ -70,6 +75,12 @@ def set_light(light_id, new_status):
         
     response = requests.post(url, headers=headers, data=data)
 
+    if not response.ok:
+        rewind(1)
+        print("Getting new token ...")
+        renew_token()
+        response = requests.post(url, headers=headers, data=data)
+
 def set_light_level(light_id, new_level):
     authorization="Bearer " + token['access_token']
 
@@ -88,6 +99,13 @@ def set_light_level(light_id, new_level):
     data = '{"level": ' + new_level + '}'
         
     response = requests.post(url, headers=headers, data=data)
+
+    if not response.ok:
+        rewind(1)
+        print("Getting new token ...")
+        renew_token()
+        response = requests.post(url, headers=headers, data=data)
+        
 
 def build_lightstat():
     lightstat = {}
@@ -170,10 +188,8 @@ def process_cmd(cmd):
                 light_id = lights[i]
                 if lightstat[light_id]["status"] == "on":
                     set_light(light_id, "off")
-                    lightstat[light_id]["status"] = "off"
                 else:
                     set_light(light_id, "on")
-                    lightstat[light_id]["status"] = "on"
 
 def cmd_loop():
     global lightstat
@@ -185,6 +201,7 @@ def cmd_loop():
         cmd = input("cmd> ");
         if len(cmd) > 0:
             process_cmd(cmd)
+            time.sleep(0.5) # status update is not instantaneous
             plant=get_plant()
             lightstat=build_lightstat()
         else:
@@ -209,12 +226,7 @@ f.close()
 
 plant = get_plant()
 if plant is None:
-    rewind(1)
-    print("Getting new token ...")
-    renew_token()
-    plant = get_plant()
-    if plant is None:
-        sys.exit(-1) 
+    sys.exit(-1)
 
 lightstat = build_lightstat()
 
