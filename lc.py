@@ -130,11 +130,12 @@ def print_status():
 
                     print (dispstr)
 
+def clear_line():
+    sys.stdout.write(u"\u001b[0K")
+
 def rewind(steps):
-    dispstr = ""
-    for i in range(steps+1):
-        dispstr+="\033[F"
-    print (dispstr)
+    for i in range(steps):
+        sys.stdout.write(u"\u001b[0K\033[F")
 
 def process_cmd(cmd):
     for c in cmd:
@@ -147,6 +148,16 @@ def process_cmd(cmd):
             else:
                 set_light(light_id, "on")
                 lightstat[light_id]["status"] = "on"
+
+def cmd_loop():
+    while True:
+        rewind(len(lights) + len(ambients) + 1)
+        print_status()
+        clear_line()
+        cmd = input("cmd> ");
+        process_cmd(cmd)
+        if len(cmd) == 0:
+            break
 
 # First print topology to user
 f=open('topology.json', "r")
@@ -178,12 +189,9 @@ lightstat = build_lightstat()
 lights=build_lightlist()
 ambients=build_ambientlist()
 
-while True:
-    rewind(len(lights) + len(ambients) + 1)
-    print_status()
-    sys.stdout.write(u"\u001b[0K")
-    cmd = input("cmd> ");
-    process_cmd(cmd)
-    if len(sys.argv) > 1 and sys.argv[1] != 'l' or len(cmd) == 0:
-        break
+cmd_loop()
+
+
+
+
 
