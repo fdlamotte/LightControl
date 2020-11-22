@@ -2,6 +2,7 @@
 
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from urllib.parse import urlparse, parse_qsl, parse_qs
+from pathlib import Path
 import time
 import requests
 import webbrowser
@@ -18,7 +19,7 @@ class MyServer(BaseHTTPRequestHandler):
         self.wfile.write(bytes("</body></html>", "utf-8"))
         res = parse_qs(urlparse(self.path).query)
         code = res['code'][0]
-        app_params = json.loads(open('~/.config/LightControl/app_params.json').read())
+        app_params = json.loads(open(str(Path.home())+'/.config/LightControl/app_params.json').read())
         files = {
 		    'client_id': (None, app_params['client_id']),
 		    'client_secret': (None, app_params['client_secret']),
@@ -28,12 +29,12 @@ class MyServer(BaseHTTPRequestHandler):
         response = requests.post('https://partners-login.eliotbylegrand.com/token', files=files)
         token=json.loads(response.text)
         token_str=json.dumps(token, indent = 4, sort_keys=True)
-        f = open("~/.config/LightControl/token.json", "w")
+        f = open(str(Path.home())+"/.config/LightControl/token.json", "w")
         f.write(token_str)
         f.close() 
  
 def log_into_legrand():
-    app_params = json.loads(open('~/.config/LightControl/app_params.json').read())
+    app_params = json.loads(open(str(Path.home())+'/.config/LightControl/app_params.json').read())
     
     hostName=app_params['host_name']
     hostPort=app_params['host_port']

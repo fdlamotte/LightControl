@@ -1,16 +1,17 @@
+from pathlib import Path
 import requests
 import json
 import sys
 
-f=open('~/.config/LightControl/app_params.json', "r")
+f=open(str(Path.home())+'/.config/LightControl/app_params.json', "r")
 app_params = json.loads(f.read())
 f.close()
 
-f=open('~/.config/LightControl/token.json', "r")
+f=open(str(Path.home())+'/.config/LightControl/token.json', "r")
 token = json.loads(f.read())
 f.close()
 
-f=open('~/.config/LightControl/topology.json', "r")
+f=open(str(Path.home())+'/.config/LightControl/topology.json', "r")
 topology = json.loads(f.read())
 f.close()
 

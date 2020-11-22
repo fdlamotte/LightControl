@@ -1,11 +1,12 @@
+from pathlib import Path
 import requests
 import json
 
-f=open('app_params.json', "r")
+f=open(str(Path.home())+'/.config/LightControl/app_params.json', "r")
 app_params = json.loads(f.read())
 f.close()
 
-f=open('token.json', "r")
+f=open(str(Path.home())+'/.config/LightControl/token.json', "r")
 token = json.loads(f.read())
 f.close()
 

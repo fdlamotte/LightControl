@@ -1,11 +1,12 @@
+from pathlib import Path
 import requests
 import json
 
-f=open('~/.config/LightControl/app_params.json', "r")
+f=open(str(Path.home())+'/.config/LightControl/app_params.json', "r")
 app_params = json.loads(f.read())
 f.close()
 
-f=open('~/.config/LightControl/token.json', "r")
+f=open(str(Path.home())+'/.config/LightControl/token.json', "r")
 token = json.loads(f.read())
 f.close()
 
@@ -22,7 +23,7 @@ response = requests.post('https://partners-login.eliotbylegrand.com/token', file
 token=json.loads(response.text)
 token_str=json.dumps(token, indent = 4, sort_keys=True)
 
-f = open("~/.config/LightControl/token.json", "w")
+f = open(str(Path.home())+"/.config/LightControl/token.json", "w")
 f.write(token_str)
 f.close() 
 
