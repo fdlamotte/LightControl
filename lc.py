@@ -111,7 +111,6 @@ def set_light_level(light_id, new_level):
         renew_token()
         headers['Authorization'] = "Bearer " + token['access_token']
         response = requests.post(url, headers=headers, data=data)
-        
 
 def build_lightstat():
     lightstat = {}
@@ -135,7 +134,6 @@ def build_lightlist():
                     lights.append(module["id"])
 
     return lights
-
 
 def build_ambientlist():
     amb=[]
@@ -242,8 +240,4 @@ lights=build_lightlist()
 ambients=build_ambientlist()
 
 cmd_loop()
-
-
-
-
 
