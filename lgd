@@ -1,4 +1,0 @@
-#!/bin/bash
-python LE_refresh.py
-python LE_PrintAndControl.py
-	
