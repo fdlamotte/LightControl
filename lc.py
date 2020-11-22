@@ -26,7 +26,7 @@ def renew_token():
     token=json.loads(response.text)
     token_str=json.dumps(token, indent = 4, sort_keys=True)
     
-    f = open("token.json", "w")
+    f = open("~/.config/LightControl/token.json", "w")
     f.write(token_str)
     f.close() 
 
@@ -213,7 +213,7 @@ def cmd_loop():
             break
 
 # First print topology to user
-f=open('topology.json', "r")
+f=open('~/.config/LightControl/topology.json', "r")
 topology = json.loads(f.read())
 f.close()
 
@@ -221,11 +221,12 @@ print_status()
 print("Initializing ... ");
 
 # opening app parameters
-f=open('app_params.json', "r")
+f=open('~/.config/LightControl/app_params.json', "r")
 app_params = json.loads(f.read())
 f.close()
 
-f=open('token.json', "r")
+# reading token
+f=open('~/.config/LightControl/token.json', "r")
 token = json.loads(f.read())
 f.close()
 
