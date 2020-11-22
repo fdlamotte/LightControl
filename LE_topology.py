@@ -1,3 +1,5 @@
+#!/bin/python
+
 from pathlib import Path
 import requests
 import json
