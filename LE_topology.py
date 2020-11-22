@@ -59,11 +59,6 @@ url+="plants/"
 url+=plant['id']
 url+="/topology"
 
-headers = {
-    'Ocp-Apim-Subscription-Key': app_params['subscription_key'],
-    'Authorization': authorization,
-}
-
 response = requests.get(url, headers=headers)
 
 topology=json.loads(response.text)
