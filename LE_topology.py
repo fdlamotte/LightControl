@@ -3,6 +3,28 @@
 from pathlib import Path
 import requests
 import json
+import sys
+
+def renew_token():
+    global token
+    global app_params
+
+    files = {
+        'client_id': (None, app_params['client_id']),
+        'client_secret': (None, app_params['client_secret']),
+        'grant_type': (None, 'refresh_token'),
+        'refresh_token': (None, token['refresh_token']),
+    }
+    
+    response = requests.post('https://partners-login.eliotbylegrand.com/token', 
+        files=files)
+    
+    token=json.loads(response.text)
+    token_str=json.dumps(token, indent = 4, sort_keys=True)
+    
+    f = open(str(Path.home())+"/.config/LightControl/token.json", "w")
+    f.write(token_str)
+    f.close() 
 
 f=open(str(Path.home())+'/.config/LightControl/app_params.json', "r")
 app_params = json.loads(f.read())
@@ -19,7 +41,16 @@ headers = {
     'Authorization': authorization,
 }
 
-response = requests.get('https://api.developer.legrand.com/hc/api/v1.0/plants', headers=headers)
+url = 'https://api.developer.legrand.com/hc/api/v1.0/plants'
+response = requests.get(url, headers=headers)
+
+if not response.ok: 
+    # maybe token has expired
+    renew_token()
+    headers['Authorization'] = "Bearer " + token['access_token']
+    response = requests.get(url, headers=headers)
+    if not response.ok:
+        sys.exit(-1)
 
 plant=json.loads(response.text)['plants'][0]
 
