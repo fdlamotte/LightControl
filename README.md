@@ -37,6 +37,6 @@ It will print out your lights and their status and give you a command line :
 
 Each light has a letter in front. 
  * to toggle lights, simply enter the letters you want to toggle (eg: "bcd") and presse Enter
- * to change the value of a variator, enter the letter in uppercase followed by the value you want to set (eg: "C10")
- * to refresh write a non-alphanumerical character 
- * to quit simply press Enter
+ * to change the value of a variator, enter the letter in uppercase followed by the value you want to set (eg: "B10" to set Variator1 intensity to 10%)
+ * to refresh write a non-alpha character 
+ * to quit simply press Enter (empty command)
