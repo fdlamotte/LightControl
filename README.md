@@ -2,7 +2,7 @@
 
 Controls lights in a Legrand Home+Control installation in a quick and dirty way.
 
-It has been tested on linux and android using Termux. My only goal was to control my lights through my pinephone (without installing anbox) and since it has been acheived for me, here is source (with no warranty whether you can use it).
+It has been tested on linux and android using Termux. My only goal was to control my lights through my PinePhone (without installing Anbox) and since it has been acheived for me, here is source (with no warranty whether you can use it).
 
 ## Install
 
@@ -12,13 +12,13 @@ Configuration is stored in `~/.config/LightControl`.
 
 You should have an account on https://portal.developer.legrand.com and subscribe to the starter kit.
 
-Copy `app\_data.json` in the configuration directory and fill the fields with information sent by Legrand on subscription, namely `client\_id`, `client\_secret` and `subscription\_key`.
+Copy `app_data.json` in the configuration directory and fill the fields with information sent by Legrand on subscription, namely `client_id`, `client_secret` and `subscription_key`.
 
-Then login using the `LE\_login.py` script. It should open a webpage to complete the login process and get the token necessary to use the application. Once this process is done, it should not be necessary to login again since the token should be refreshed automatically.
+Then login using the `LE_login.py` script. It should open a webpage to complete the login process and get the token necessary to use the application. Once this process is done, it should not be necessary to login again since the token should be refreshed automatically.
 
-You should now be able to get your topology, try `LE\_topology.py`, which should print the topology as a json format to standard output. Before using the TUI interface, you need to create `topology.json` in the configuration directory. You can do so by issuing :
+You should now be able to get your topology, try `LE_topology.py`, which should print the topology as a json format to standard output. Before using the TUI interface, you need to create `topology.json` in the configuration directory. You can do so by issuing :
 
-	python LE\_topology.py > ~/.config/LightControl/topology.json.
+	python LE_topology.py > ~/.config/LightControl/topology.json.
 
 ## Usage
 
@@ -40,6 +40,3 @@ Each light has a letter in front.
  * to change the value of a variator, enter the letter in uppercase followed by the value you want to set (eg: "C10")
  * to refresh write a non-alphanumerical character 
  * to quit simply press Enter
-
-
-
