@@ -216,6 +216,7 @@ def tui():
     global token
     global app_params
     global plant
+    global lightstat
 
     # print topology to user
     print_status()
