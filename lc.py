@@ -7,6 +7,7 @@ except ImportError:
     import json
 import sys
 import time
+import getopt
 from pathlib import Path
 
 lightstat = None
@@ -211,13 +212,31 @@ def cmd_loop():
         else:
             break
 
-# First print topology to user
+def tui():
+    global token
+    global app_params
+    global plant
+
+    # print topology to user
+    print_status()
+    print("Initializing ... ");
+    
+    plant = get_plant()
+    if plant is None:
+        sys.exit(-1)
+    
+    lightstat = build_lightstat()
+    
+    cmd_loop()
+
+
+
 f=open(str(Path.home())+'/.config/LightControl/topology.json', "r")
 topology = json.loads(f.read())
 f.close()
 
-print_status()
-print("Initializing ... ");
+lights=build_lightlist()
+ambients=build_ambientlist()
 
 # opening app parameters
 f=open(str(Path.home())+'/.config/LightControl/app_params.json', "r")
@@ -229,15 +248,30 @@ f=open(str(Path.home())+'/.config/LightControl/token.json', "r")
 token = json.loads(f.read())
 f.close()
 
-plant = get_plant()
-if plant is None:
-    sys.exit(-1)
+if len(sys.argv) == 1:
+    tui()
+else:
+    opts, args = getopt.getopt(sys.argv[1:],"st")
+    for opt, arg in opts:
+        if opt == '-t':
+            print_status()
+        elif opt == '-s': 
+            print_status()
+            print ("Initializing ... ")
+            plant = get_plant()
+            if plant is None:
+                sys.exit(-1)
 
-lightstat = build_lightstat()
+            lightstat = build_lightstat()
+            lights=build_lightlist()
+            ambients=build_ambientlist()
 
-# building lists of lights and ambients for the execution of commands
-lights=build_lightlist()
-ambients=build_ambientlist()
-
-cmd_loop()
+            rewind(len(lights) + len(ambients) + 1)
+            print_status()
+            clear_line()
+    if len(args) > 0:
+        plant = get_plant()
+        lightstat = build_lightstat()
+        for i in args:
+            process_cmd(i)            
 
